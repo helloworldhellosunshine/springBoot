@@ -1,0 +1,58 @@
+package cn.zcbigdata.mybits_demo.controller;
+
+import cn.zcbigdata.mybits_demo.service.StudentService;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+
+@Controller
+public class LoginController {
+
+    private static final Logger LOGGER = Logger.getLogger(LoginController.class);
+
+    @Autowired
+    private StudentService studentService;
+
+    /**
+     * 跳转到登录页面
+     * @return
+     */
+    @RequestMapping("/login")
+    public String tologin(){
+        return "login";
+    }
+
+    /**
+     * 登录操作
+     * @param request
+     * @return
+     */
+    @RequestMapping(value="/tologin", method=RequestMethod.POST,produces = "text/plain;charset=utf-8")
+    public String login(HttpServletRequest request, Model model){
+        String username = request.getParameter("account");
+        String password = request.getParameter("password");
+        LOGGER.info("tologin接收参数"+" " +username+" "+password);
+        if (StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)){
+            if (studentService.login(username,password,request)){
+                LOGGER.info("登录成功");
+                return "/back";
+            }else {
+                LOGGER.info("登录失败");
+                model.addAttribute("message","登录失败，无此用户");
+            }
+        }else {
+            LOGGER.info("输入参数为空");
+            model.addAttribute("message","输入为空");
+        }
+        return "err";
+    }
+
+}
