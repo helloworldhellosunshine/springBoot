@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../static/layui/css/layui.css"  media="all">
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+</head>
+<body>
+
+<form enctype="multipart/form-data" method="post" action="http://localhost:8080/upload/uploadFile">
+    文件：<input type="file" name="file"/>
+    <input type="submit" value="上传"/>
+</form>
+<!--下载from表单 -->
+<form class="layui-form" action="http://localhost:8080/upload/download" method="post" id="updataForm" style="display:none" lay-filter="updata" enctype="multipart/form-data">
+    <div class="layui-form-item" style="display:none">
+        <label class="layui-form-label">id</label>
+        <div class="layui-input-block">
+            <input type="text" id="id" name="id" lay-verify="id" autocomplete="off" placeholder="用户名" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">文件名称</label>
+        <div class="layui-input-block">
+            <input type="text" id="filepath" name="filepath" lay-verify="filepath" autocomplete="off" placeholder="文件名称" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item" id="sub">
+        <button style="" class="layui-btn" type="submit"  id="updatasub">下载</button>
+    </div>
+</form>
+
+<table class="layui-hide" id="test" lay-filter="test"></table>
+
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="down">下载</a>
+</script>
+
+
+<script src="../static/layui/layui.js"></script>
+<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+
+<script>
+    layui.use('table', function(){
+        var table = layui.table;
+
+        table.render({
+            elem: '#test'
+            ,url:'http://localhost:8080/upload/showFiles'
+            ,toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
+            ,defaultToolbar: ['filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
+                title: '提示'
+                ,layEvent: 'LAYTABLE_TIPS'
+                ,icon: 'layui-icon-tips'
+            }]
+            ,title: '用户数据表'
+            ,cols: [
+                [
+                {type: 'checkbox', fixed: 'left'}
+                ,{field:'id', width:80, title: 'ID', sort: true}
+                ,{field:'filepath', width:150, title: '文件名'}
+                ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:150}
+                ]
+            ]
+            ,page: true
+            ,response:{
+                statusName: 'status' //规定数据状态的字段名称，默认：code
+                ,dataName: 'rows' //规定数据列表的字段名称，默认：data
+            }
+            ,parseData: function(res){ //将原始数据解析成 table 组件所规定的数据
+                return {
+                    "status": res[0].status,   //解析接口状态
+                    "message":res[1].message,  //解析提示文本
+                    "count": 100,       //解析数据长度
+                    "rows": res[3].rows.item  //解析数据列表
+                };
+            }
+        });
+
+        //引入from表单
+        layui.use(['form', 'laydate'], function(){
+            form = layui.form;
+            form.render();
+
+        });
+
+
+        //监听行工具事件
+        table.on('tool(test)', function(obj){
+            var data = obj.data;
+
+            if(obj.event === 'down'){
+                var filepath =  data.filepath;
+                console.log(filepath);
+                form.val("updata", { //formTest 即 class="layui-form" 所在元素属性 lay-filter="" 对应的值
+                   "filepath":data.filepath
+                });
+                updateById(data);
+            }
+        });
+    });
+
+    //修改
+    function updateById(data){
+
+        layer_index= layer.open({
+            type: 1,  //可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            title: "修改", //数组第二项可以写任意css样式；如果你不想显示标题栏，你可以title: false
+            area: ['300px', '200px'], //所打开页面大小
+            content:$("#updataForm"), //内容
+            //将数据显示在框上边
+
+            //关闭操作
+            cancel: function(){
+                layer.close(layer_index);
+                $("#updataForm")[0].reset();
+
+            }
+        });
+    }
+
+
+</script>
+
+</body>
+</html>

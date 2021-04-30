@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-
+/**
+ * 登录页面
+ */
 @Controller
 public class LoginController {
 
@@ -27,7 +29,24 @@ public class LoginController {
      */
     @RequestMapping("/login")
     public String tologin(){
+        LOGGER.info("Go To login.html");
         return "login";
+    }
+
+    @RequestMapping("/content")
+    public String content(){
+        LOGGER.info("Go To content.html");
+        return "content";
+    }
+
+    /**
+     * 跳转到文件上传和下载页面
+     * @return
+     */
+    @RequestMapping("/upload")
+    public String upload(){
+        LOGGER.info("Go To upload.html");
+        return "upload";
     }
 
     /**
@@ -43,7 +62,7 @@ public class LoginController {
         if (StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)){
             if (studentService.login(username,password,request)){
                 LOGGER.info("登录成功");
-                return "/back";
+                return "back";
             }else {
                 LOGGER.info("登录失败");
                 model.addAttribute("message","登录失败，无此用户");

@@ -74,8 +74,8 @@
 <!--            &lt;!&ndash;//无论字段是什么类型，生成的类属性都是varchar。 可选的（0 or 1） 测试无效 &ndash;&gt;-->
 <!--            &lt;!&ndash; <columnOverride column="city_code" jdbcType="VARCHAR" /> &ndash;&gt;-->
 <!--        </table>-->
-        <table  tableName="manager" domainObjectName="Manager"
-                enableInsert="flase" enableCountByExample="flase" enableUpdateByExample="flase" enableDeleteByExample="true"
+        <table  tableName="filepath" domainObjectName="Filepath"
+                enableInsert="true" enableCountByExample="flase" enableUpdateByExample="flase" enableDeleteByExample="flase"
                 enableSelectByExample="flase" selectByExampleQueryId="flase">
             <property name="useActualColumnNames" value="true"/>
 
